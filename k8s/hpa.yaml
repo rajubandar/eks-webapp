@@ -1,0 +1,28 @@
+# HorizontalPodAutoscaler to automatically scale the Deployment based on CPU usage
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  # Name of the HPA resource
+  name: webapp-hpa
+  # Namespace where the HPA is created
+  namespace: webapp
+spec:
+  # Minimum number of pod replicas
+  minReplicas: 2
+  # Maximum number of pod replicas
+  maxReplicas: 5
+  # Target resource (the Deployment) that this HPA scales
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webapp-deployment
+  # Metrics used to calculate desired replica count
+  metrics:
+    - type: Resource
+      resource:
+        # Use CPU utilization for autoscaling
+        name: cpu
+        target:
+          # Maintain average CPU utilization at 70% across pods
+          type: Utilization
+          averageUtilization: 70

@@ -1,0 +1,85 @@
+# Deployment for the Node.js web application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Name of the Deployment
+  name: webapp-deployment
+  # Namespace where the Deployment is created
+  namespace: webapp
+  labels:
+    app: webapp
+spec:
+  # Desired number of pod replicas
+  replicas: 2
+  # Label selector that identifies pods managed by this Deployment
+  selector:
+    matchLabels:
+      app: webapp
+  # Rolling update strategy for zero-downtime deployments
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # Max number of pods that can be created above the desired number
+      maxSurge: 1
+      # Max number of pods that can be unavailable during update
+      maxUnavailable: 1
+  # Pod template that describes the pods to be created
+  template:
+    metadata:
+      labels:
+        # Labels used for selecting pods by Service and HPA
+        app: webapp
+    spec:
+      containers:
+        - name: webapp-container
+          # Container image hosted on AWS ECR.
+          # Replace <AWS_ACCOUNT_ID> with your actual AWS account ID.
+          image: "<AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/eks-webapp:latest"
+          # Always pull the latest image when starting the pod
+          imagePullPolicy: Always
+          # Exposed container port (matches Express app port)
+          ports:
+            - containerPort: 3000
+              name: http
+          # Inject environment variables from ConfigMap and Secret
+          envFrom:
+            # Non-sensitive configuration
+            - configMapRef:
+                name: webapp-config
+            # Sensitive configuration such as API keys
+            - secretRef:
+                name: webapp-secret
+          # Resource requests and limits for proper scheduling and stability
+          resources:
+            requests:
+              # Minimum CPU and memory requested
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              # Maximum CPU and memory allowed
+              cpu: "500m"
+              memory: "512Mi"
+          # Liveness probe to check if the container is healthy
+          livenessProbe:
+            httpGet:
+              # Health endpoint exposed by the app
+              path: /health
+              port: 3000
+            # Initial delay before first probe
+            initialDelaySeconds: 15
+            # How often to perform the probe
+            periodSeconds: 15
+            # Number of consecutive failures before marking pod as unhealthy
+            failureThreshold: 3
+          # Readiness probe to check if the container is ready to serve traffic
+          readinessProbe:
+            httpGet:
+              # Health endpoint used to determine readiness
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+      # Optional: imagePullSecrets can be configured if using private registries
+      # imagePullSecrets:
+      #   - name: my-ecr-pull-secret

@@ -1,0 +1,9 @@
+# Namespace definition for the web application
+apiVersion: v1
+kind: Namespace
+metadata:
+  # Name of the namespace that will contain all webapp resources
+  name: webapp
+  labels:
+    # Optional labels for organization and selection
+    name: webapp

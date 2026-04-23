@@ -1,0 +1,30 @@
+{
+  "name": "eks-webapp",
+  "version": "1.0.0",
+  "description": "Production-ready Node.js + Express web application for Amazon EKS deployment.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "echo \"No lint configured\""
+  },
+  "keywords": [
+    "node",
+    "express",
+    "kubernetes",
+    "aws",
+    "eks",
+    "docker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+# ConfigMap to store non-sensitive application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # ConfigMap name
+  name: webapp-config
+  # Namespace where the ConfigMap lives
+  namespace: webapp
+data:
+  # Application name displayed on the dashboard and in logs
+  APP_NAME: "EKS Node.js WebApp"
+  # Application version string
+  APP_VERSION: "1.0.0"
+  # Application environment (e.g., development, staging, production)
+  APP_ENV: "production"

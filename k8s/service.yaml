@@ -1,0 +1,24 @@
+# Service to expose the web application to external traffic
+apiVersion: v1
+kind: Service
+metadata:
+  # Name of the Service
+  name: webapp-service
+  # Namespace where the Service is created
+  namespace: webapp
+  labels:
+    app: webapp
+spec:
+  # Type LoadBalancer creates an external AWS ELB/NLB when running on EKS
+  type: LoadBalancer
+  # Selector to route traffic to pods with matching labels
+  selector:
+    app: webapp
+  ports:
+    # External port and target container port mapping
+    - name: http
+      # Port exposed outside the cluster (HTTP port)
+      port: 80
+      # Port on the container that receives traffic
+      targetPort: 3000
+      protocol: TCP
